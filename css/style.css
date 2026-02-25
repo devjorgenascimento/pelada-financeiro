@@ -1,0 +1,186 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+@media (max-width: 480px) {
+  .tabela th,
+  .tabela td {
+    padding: 6px;
+    font-size: 12px;
+  }
+}
+
+body {
+  background: #f4f6f9;
+  color: #333;
+}
+
+main {
+    padding-bottom: 70px;
+    min-height: 100vh;
+}
+
+/* Header */
+.topo {
+  background: #1f2937;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 20px;
+}
+
+/* Navegação */
+.nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  background: #111827;
+  border-top: 1px solid #1f2937;
+}
+
+.aba {
+  flex: 1;
+  padding: 14px 0;
+  background: transparent;
+  color: #9ca3af;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 1.0s;
+}
+
+.aba:hover {
+  background: #1f2937;
+  color: white;
+}
+
+.aba.ativa {
+  background: #2563eb;
+  color: white;
+}
+
+/* Telas */
+.tela {
+  display: none;
+  padding: 20px;
+}
+
+.tela.ativa {
+  display: block;
+}
+
+/* Ações */
+.acoes-jogadores,
+.acoes-caixa {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+/* Botões */
+button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+#btn-adicionar-jogador {
+  background: #2563eb;
+  color: white;
+}
+
+#btn-adicionar-saida {
+    background-color: red;
+    color: white;
+}
+
+#btn-fechar-mes {
+  background: #374151;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* Lista */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.tabela th {
+  background: #1f2937;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+.tabela td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela tbody tr:hover {
+  background: #f3f4f6;
+}
+/* Caixa */
+.resumo-caixa {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#saldo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #16a34a;
+}
+
+.jogador-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.pago {
+  background: #16a34a;
+  color: white;
+}
+
+.pendente {
+  background: #dc2626;
+  color: white;
+}
+
+.jogador-acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
