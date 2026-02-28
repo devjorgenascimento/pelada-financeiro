@@ -1,9 +1,65 @@
+
+import { salvar, carregar } from "./storage.js"
+
 const inputNome = document.getElementById("input-nome-jogador");
 const btnAdicionar = document.getElementById("btn-adicionar-jogador");
 const btnFecharMes = document.getElementById("btn-fechar-mes");
 const listaJogadores = document.getElementById("lista-jogadores");
 const botoesAbas = document.querySelectorAll(".aba");
 const telas = document.querySelectorAll(".tela");
+const jogadoresSalvos = carregar("jogadores");
+
+if (jogadoresSalvos.length > 0) {
+  jogadoresSalvos.forEach(j => {
+    const linha = document.createElement("tr");
+
+    linha.classList.add(
+      j.status === "Pago" ? "linha-pago" : "linha-pendente"
+    );
+
+    linha.innerHTML = `
+      <td>${j.nome}</td>
+      <td class="status">${j.status}</td>
+      <td>
+        <input type="number" class="valor" min="0" step="0.01" value="${j.valor}">
+      </td>
+      <td>
+        <select class="forma">
+          <option value="Dinheiro" ${j.forma === "Dinheiro" ? "selected" : ""}>Dinheiro</option>
+          <option value="Pix" ${j.forma === "Pix" ? "selected" : ""}>Pix</option>
+        </select>
+      </td>
+      <td>
+        <input type="checkbox" class="check" ${j.check ? "checked" : ""}>
+      </td>
+    `;
+
+    if (j.check) {
+      linha.querySelector(".valor").disabled = true;
+      linha.querySelector(".forma").disabled = true;
+    }
+
+    listaJogadores.appendChild(linha);
+  });
+}
+
+function salvarJogadores() {
+  const linhas = listaJogadores.querySelectorAll("tr");
+  const lista = [];
+
+  linhas.forEach(linha => {
+    const nome = linha.children[0].textContent;
+    const status = linha.querySelector(".status").textContent;
+    const valor = linha.querySelector(".valor").value;
+    const forma = linha.querySelector(".forma").value;
+    const check = linha.querySelector(".check").checked;
+
+    lista.push({ nome, status, valor, forma, check });
+  });
+
+  salvar("jogadores", lista); // 👈 FALTAVA ISSO
+}
+
 
 // ADICIONAR JOGADOR
 btnAdicionar.addEventListener("click", () => {
@@ -33,6 +89,8 @@ btnAdicionar.addEventListener("click", () => {
 
   listaJogadores.appendChild(linha);
   inputNome.value = "";
+
+  salvarJogadores();
 });
 
 // CHECKBOX MUDA STATUS E TRAVA CAMPOS
@@ -66,6 +124,8 @@ listaJogadores.addEventListener("click", (e) => {
 
     listaJogadores.prepend(linha)
   }
+
+  salvarJogadores();
 });
 
 botoesAbas.forEach(botao => {
@@ -108,6 +168,7 @@ btnFecharMes.addEventListener("click", () => {
       check.checked = false;
     }
   });
+  salvarJogadores();
 });
 
 // ABA CAIXA
@@ -125,12 +186,21 @@ const modalDescricao = document.getElementById("modal-descricao");
 const btnConfirmar = document.getElementById("modal-confirmar");
 const btnCancelar = document.getElementById("modal-cancelar");
 
+let movimentacoes = carregar("caixa") || [];
 let saldo = 0;
 let tipoAtual = null;
 
 // Atualiza saldo na tela
 function atualizarSaldo() {
   saldoSpan.textContent = saldo.toFixed(2);
+}
+
+function calcularSaldo() {
+  saldo = movimentacoes.reduce((total, mov) => {
+    return mov.tipo === "entrada"
+      ? total + mov.valor
+      : total - mov.valor;
+  }, 0);
 }
 
 // Abre modal
@@ -153,24 +223,44 @@ function fecharModal() {
 
 // Criar movimentação
 function criarMovimentacao(valor, descricao) {
-  const li = document.createElement("li");
 
-  if (tipoAtual === "entrada") {
-    saldo += valor;
-    li.innerHTML = `
-      <span>🟢 ${descricao}</span>
-      <strong>+ R$ ${valor.toFixed(2)}</strong>
-    `;
-  } else {
-    saldo -= valor;
-    li.innerHTML = `
-      <span>🔴 ${descricao}</span>
-      <strong>- R$ ${valor.toFixed(2)}</strong>
-    `;
-  }
+  movimentacoes.push({
+    tipo: tipoAtual,
+    valor: valor,
+    descricao: descricao
+  });
 
-  listaMov.prepend(li);
+  salvar("caixa", movimentacoes);
+
+  renderizarMovimentacoes();
+}
+
+function renderizarMovimentacoes() {
+  listaMov.innerHTML = "";
+
+  calcularSaldo();
   atualizarSaldo();
+
+  movimentacoes
+    .slice()
+    .reverse()
+    .forEach(mov => {
+      const li = document.createElement("li");
+
+      if (mov.tipo === "entrada") {
+        li.innerHTML = `
+          <span>🟢 ${mov.descricao}</span>
+          <strong>+ R$ ${mov.valor.toFixed(2)}</strong>
+        `;
+      } else {
+        li.innerHTML = `
+          <span>🔴 ${mov.descricao}</span>
+          <strong>- R$ ${mov.valor.toFixed(2)}</strong>
+        `;
+      }
+
+      listaMov.appendChild(li);
+    });
 }
 
 // Eventos abrir
@@ -190,3 +280,5 @@ btnConfirmar.addEventListener("click", () => {
   criarMovimentacao(valor, descricao);
   fecharModal();
 });
+
+renderizarMovimentacoes();
