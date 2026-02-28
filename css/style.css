@@ -1,4 +1,4 @@
-/* Reset básico */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -6,101 +6,69 @@
   font-family: Arial, sans-serif;
 }
 
-@media (max-width: 480px) {
-  .tabela th,
-  .tabela td {
-    padding: 6px;
-    font-size: 12px;
-  }
-}
-
 body {
   background: #f4f6f9;
   color: #333;
 }
 
-main {
-    padding-bottom: 70px;
-    min-height: 100vh;
-}
-
-/* Header */
+/* HEADER */
 .topo {
   background: #1f2937;
   color: white;
-  padding: 10px;
+  padding: 12px;
   text-align: center;
-  font-size: 20px;
 }
 
-/* Navegação */
-.nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  background: #111827;
-  border-top: 1px solid #1f2937;
-}
-
-.aba {
-  flex: 1;
-  padding: 14px 0;
-  background: transparent;
-  color: #9ca3af;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 1.0s;
-}
-
-.aba:hover {
-  background: #1f2937;
-  color: white;
-}
-
-.aba.ativa {
-  background: #2563eb;
-  color: white;
-}
-
-/* Telas */
 .tela {
   display: none;
-  padding: 20px;
 }
 
 .tela.ativa {
   display: block;
 }
 
-/* Ações */
-.acoes-jogadores,
-.acoes-caixa {
+.nav {
   display: flex;
+  background-color: rgba(0, 0, 0, 0.762);
   justify-content: space-between;
-  margin-bottom: 15px;
 }
 
-/* Botões */
+.nav button {
+  border-radius: 0px;
+}
+
+/* AÇÕES */
+.acoes-jogadores {
+  display: flex;
+  gap: 10px;
+  margin: 20px;
+  flex-wrap: wrap;
+}
+
+.inputNome {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.valor {
+  text-align: right;
+  width: 30px;
+}
+
 button {
   padding: 8px 12px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
   font-size: 14px;
-  transition: 0.2s;
 }
 
 #btn-adicionar-jogador {
   background: #2563eb;
   color: white;
-}
-
-#btn-adicionar-saida {
-    background-color: red;
-    color: white;
 }
 
 #btn-fechar-mes {
@@ -112,9 +80,10 @@ button:hover {
   opacity: 0.85;
 }
 
-/* Lista */
+/* TABELA */
 .tabela {
-  width: 100%;
+  width: 95%;
+  margin: 0 auto 30px;
   border-collapse: collapse;
   background: white;
   border-radius: 8px;
@@ -138,49 +107,137 @@ button:hover {
   border-bottom: none;
 }
 
-.tabela tbody tr:hover {
+.tabela tbody tr:not(.linha-paga):not(.linha-pendente):hover {
   background: #f3f4f6;
 }
-/* Caixa */
+
+/* INPUTS DENTRO DA TABELA */
+.tabela input,
+.tabela select {
+  width: 100%;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* STATUS */
+.status {
+  font-weight: bold;
+}
+
+.linha-pendente {
+  background-color: #ff3131;
+}
+
+.linha-pago {
+  background-color: rgb(8, 215, 8);
+  opacity: 0.5;
+}
+
+/* RESPONSIVO SIMPLES */
+@media (max-width: 480px) {
+  .tabela {
+    font-size: 12px;
+  }
+
+  .tabela th,
+  .tabela td {
+    padding: 6px;
+  }
+}
+
+/* ABA CAIXA */
+
 .resumo-caixa {
   background: white;
   padding: 15px;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin: 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 #saldo {
   font-size: 24px;
   font-weight: bold;
-  color: #16a34a;
 }
 
-.jogador-info {
+.acoes-caixa {
   display: flex;
+  gap: 10px;
+  margin: 0 20px 15px;
   justify-content: space-between;
-  margin-bottom: 8px;
 }
 
-.status {
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 12px;
-}
-
-.pago {
+#btn-entrada {
   background: #16a34a;
   color: white;
 }
 
-.pendente {
+#btn-saida {
   background: #dc2626;
   color: white;
 }
 
-.jogador-acoes {
+.lista {
+  list-style: none;
+  margin: 0 20px 30px;
+  padding: 0;
+}
+
+.lista li {
+  background: white;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
+  font-size: 14px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
   align-items: center;
+  padding: 20px;
+}
+
+.modal.ativo {
+  display: flex;
+}
+
+.modal-conteudo {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-conteudo input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#modal-confirmar {
+  background: #2563eb;
+  color: white;
+}
+
+#modal-cancelar {
+  background: #9ca3af;
+  color: white;
 }
