@@ -8,6 +8,10 @@ const listaJogadores = document.getElementById("lista-jogadores");
 const botoesAbas = document.querySelectorAll(".aba");
 const telas = document.querySelectorAll(".tela");
 const jogadoresSalvos = carregar("jogadores");
+const btnExcluirJogador = document.getElementById("btn-excluir-jogador")
+
+let modoExclusao = false;
+
 
 if (jogadoresSalvos.length > 0) {
   jogadoresSalvos.forEach(j => {
@@ -98,6 +102,17 @@ listaJogadores.addEventListener("click", (e) => {
   if (!e.target.classList.contains("check")) return;
 
   const linha = e.target.closest("tr");
+  if (modoExclusao) {
+    linha.remove();
+    salvarJogadores();
+
+    // volta ao normal
+    modoExclusao = false;
+    listaJogadores.classList.remove("modo-exclusao");
+    btnExcluirJogador.classList.remove("btn-exclusao-ativo");
+
+    return;
+  }
   const status = linha.querySelector(".status");
   const valor = linha.querySelector(".valor");
   const forma = linha.querySelector(".forma");
@@ -126,6 +141,18 @@ listaJogadores.addEventListener("click", (e) => {
   }
 
   salvarJogadores();
+});
+
+btnExcluirJogador.addEventListener("click", () => {
+  modoExclusao = !modoExclusao;
+
+  if (modoExclusao) {
+    listaJogadores.classList.add("modo-exclusao");
+    btnExcluirJogador.classList.add("btn-excluir-jogador");
+  } else {
+    listaJogadores.classList.remove("modo-exclusao");
+    btnExcluirJogador.classList.remove("btn-exclusao-ativo");
+  }
 });
 
 botoesAbas.forEach(botao => {

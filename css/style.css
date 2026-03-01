@@ -241,3 +241,12 @@ button:hover {
   background: #9ca3af;
   color: white;
 }
+.modo-exclusao {
+  border: 3px solid #d4de0c;
+  box-shadow: 0 0 10px rgba(220, 217, 38, 0.4);
+}
+
+.btn-exclusao-ativo {
+  background-color: #dc2626;
+  color: white;
+}
