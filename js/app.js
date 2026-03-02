@@ -181,6 +181,7 @@ btnFecharMes.addEventListener("click", () => {
     const valor = linha.querySelector(".valor");
     const forma = linha.querySelector(".forma");
     const check = linha.querySelector(".check");
+    
 
     linha.classList.remove("linha-pago");
     linha.classList.add("linha-pendente");
@@ -194,8 +195,10 @@ btnFecharMes.addEventListener("click", () => {
     if(check) {
       check.checked = false;
     }
+
+
   });
-  salvarJogadores();
+  listaMov.innerHTML = "";
 });
 
 // ABA CAIXA
