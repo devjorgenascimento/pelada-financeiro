@@ -22,7 +22,7 @@ if (jogadoresSalvos.length > 0) {
     );
 
     linha.innerHTML = `
-      <td>${j.nome}</td>
+      <td class="nome">${j.nome}</td>
       <td class="status">${j.status}</td>
       <td>
         <input type="number" class="valor" min="0" step="0.01" value="${j.valor}">
@@ -52,7 +52,7 @@ function salvarJogadores() {
   const lista = [];
 
   linhas.forEach(linha => {
-    const nome = linha.children[0].textContent;
+    const nome = linha.querySelector(".nome").textContent;
     const status = linha.querySelector(".status").textContent;
     const valor = linha.querySelector(".valor").value;
     const forma = linha.querySelector(".forma").value;
@@ -75,7 +75,7 @@ btnAdicionar.addEventListener("click", () => {
   linha.classList.add("linha-pendente");
 
   linha.innerHTML = `
-    <td>${nome}</td>
+    <td class="nome">${nome}</td>
     <td class="status pendente">Pendente</td>
     <td>
       <input type="number" class="valor" min="0" step="0.01">
@@ -102,22 +102,34 @@ listaJogadores.addEventListener("click", (e) => {
   if (!e.target.classList.contains("check")) return;
 
   const linha = e.target.closest("tr");
+
+  // 🗑 MODO EXCLUSÃO
   if (modoExclusao) {
     linha.remove();
     salvarJogadores();
 
-    // volta ao normal
     modoExclusao = false;
     listaJogadores.classList.remove("modo-exclusao");
     btnExcluirJogador.classList.remove("btn-exclusao-ativo");
 
     return;
   }
+
   const status = linha.querySelector(".status");
   const valor = linha.querySelector(".valor");
   const forma = linha.querySelector(".forma");
+  const nome = linha.querySelector(".nome").textContent;
 
   if (e.target.checked) {
+
+    // evita duplicação
+    if (status.textContent === "Pago") return;
+
+    const valorPago = parseFloat(valor.value);
+    const formaPagamento = forma.value;
+
+    if (!valorPago || isNaN(valorPago)) return;
+
     status.textContent = "Pago";
 
     linha.classList.remove("linha-pendente");
@@ -128,7 +140,23 @@ listaJogadores.addEventListener("click", (e) => {
 
     listaJogadores.appendChild(linha);
 
+    // 💰 CRIA MOVIMENTAÇÃO NO CAIXA
+    const novaMov = {
+      tipo: "entrada",
+      valor: valorPago,
+      descricao: `${nome} pagou a mensalidade no ${formaPagamento}`
+    };
+
+    movimentacoes.push(novaMov);
+    salvar("caixa", movimentacoes);
+
+    historicoMes.push(novaMov);
+    salvar("historicoMes", historicoMes);
+
+    renderizarMovimentacoes();
+
   } else {
+
     status.textContent = "Pendente";
 
     linha.classList.remove("linha-pago");
@@ -137,7 +165,7 @@ listaJogadores.addEventListener("click", (e) => {
     valor.disabled = false;
     forma.disabled = false;
 
-    listaJogadores.prepend(linha)
+    listaJogadores.prepend(linha);
   }
 
   salvarJogadores();
@@ -196,8 +224,12 @@ btnFecharMes.addEventListener("click", () => {
       check.checked = false;
     }
 
-
   });
+
+  historicoMes = [];
+
+  salvar("historicoMes", historicoMes);
+
   listaMov.innerHTML = "";
 });
 
@@ -217,10 +249,11 @@ const btnConfirmar = document.getElementById("modal-confirmar");
 const btnCancelar = document.getElementById("modal-cancelar");
 
 let movimentacoes = carregar("caixa") || [];
+let historicoMes = carregar("historicoMes") || [];
 let saldo = 0;
 let tipoAtual = null;
 
-// Atualiza saldo na tela
+// Atualiza saldo
 function atualizarSaldo() {
   saldoSpan.textContent = saldo.toFixed(2);
 }
@@ -233,7 +266,7 @@ function calcularSaldo() {
   }, 0);
 }
 
-// Abre modal
+// Modal
 function abrirModal(tipo) {
   tipoAtual = tipo;
   modal.classList.add("ativo");
@@ -246,7 +279,6 @@ function abrirModal(tipo) {
     tipo === "entrada" ? "Nova Entrada" : "Nova Saída";
 }
 
-// Fecha modal
 function fecharModal() {
   modal.classList.remove("ativo");
 }
@@ -254,27 +286,35 @@ function fecharModal() {
 // Criar movimentação
 function criarMovimentacao(valor, descricao) {
 
-  movimentacoes.push({
+  const novaMov = {
     tipo: tipoAtual,
     valor: valor,
     descricao: descricao
-  });
+  };
 
+  // permanente
+  movimentacoes.push(novaMov);
   salvar("caixa", movimentacoes);
+
+  // histórico do mês
+  historicoMes.push(novaMov);
+  salvar("historicoMes", historicoMes);
 
   renderizarMovimentacoes();
 }
 
+// Renderiza usando APENAS histórico do mês
 function renderizarMovimentacoes() {
   listaMov.innerHTML = "";
 
   calcularSaldo();
   atualizarSaldo();
 
-  movimentacoes
+  historicoMes
     .slice()
     .reverse()
     .forEach(mov => {
+
       const li = document.createElement("li");
 
       if (mov.tipo === "entrada") {
@@ -293,14 +333,11 @@ function renderizarMovimentacoes() {
     });
 }
 
-// Eventos abrir
+// Eventos
 btnEntrada.addEventListener("click", () => abrirModal("entrada"));
 btnSaida.addEventListener("click", () => abrirModal("saida"));
-
-// Cancelar
 btnCancelar.addEventListener("click", fecharModal);
 
-// Confirmar
 btnConfirmar.addEventListener("click", () => {
   const valor = parseFloat(modalValor.value);
   const descricao = modalDescricao.value.trim();
@@ -311,4 +348,5 @@ btnConfirmar.addEventListener("click", () => {
   fecharModal();
 });
 
+// Inicializa
 renderizarMovimentacoes();
