@@ -238,7 +238,10 @@ btnFecharMes.addEventListener("click", () => {
 const btnEntrada = document.getElementById("btn-entrada");
 const btnSaida = document.getElementById("btn-saida");
 const listaMov = document.getElementById("lista-movimentacoes");
-const saldoSpan = document.getElementById("saldo");
+const totalGeralEl = document.getElementById("total-geral");
+const totalPixEl = document.getElementById("total-pix");
+const totalDinheiroEl = document.getElementById("total-dinheiro");
+
 
 // Modal
 const modal = document.getElementById("modal-caixa");
@@ -250,20 +253,44 @@ const btnCancelar = document.getElementById("modal-cancelar");
 
 let movimentacoes = carregar("caixa") || [];
 let historicoMes = carregar("historicoMes") || [];
+
 let saldo = 0;
+
+let totalPix = 0;
+let totalDinheiro = 0;
 let tipoAtual = null;
 
 // Atualiza saldo
 function atualizarSaldo() {
-  saldoSpan.textContent = saldo.toFixed(2);
+
+  totalGeralEl.textContent = saldo.toFixed(2);
+  totalPixEl.textContent = totalPix.toFixed(2);
+  totalDinheiroEl.textContent = totalDinheiro.toFixed(2);
 }
 
 function calcularSaldo() {
-  saldo = movimentacoes.reduce((total, mov) => {
-    return mov.tipo === "entrada"
-      ? total + mov.valor
-      : total - mov.valor;
-  }, 0);
+  saldo = 0;
+  totalPix = 0;
+  totalDinheiro = 0;
+
+  movimentacoes.forEach(mov => {
+
+    if (mov.tipo === "entrada") {
+      saldo += mov.valor
+
+      if (mov.forma === "pix") {
+        totalPix += mov.valor
+      };
+
+      if (mov.forma === "dinheiro") {
+        totalDinheiro += mov.valor
+      }
+
+    } else {
+      saldo -= mov.valor
+    }
+  })
+
 }
 
 // Modal
@@ -289,7 +316,8 @@ function criarMovimentacao(valor, descricao) {
   const novaMov = {
     tipo: tipoAtual,
     valor: valor,
-    descricao: descricao
+    descricao: descricao,
+    forma: "pix"
   };
 
   // permanente
@@ -351,7 +379,7 @@ btnConfirmar.addEventListener("click", () => {
 // Inicializa
 renderizarMovimentacoes();
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js")
-    .then(() => console.log("Service Worker registrado"));
-}
+//if ("serviceWorker" in navigator) {
+//  navigator.serviceWorker.register("./service-worker.js")
+//    .then(() => console.log("Service Worker registrado"));
+//}

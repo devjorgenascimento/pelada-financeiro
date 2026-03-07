@@ -161,6 +161,21 @@ button:hover {
   font-weight: bold;
 }
 
+.sub-totais {
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: bold;
+}
+
+.sub-totais p {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+}
+
 .acoes-caixa {
   display: flex;
   gap: 10px;
