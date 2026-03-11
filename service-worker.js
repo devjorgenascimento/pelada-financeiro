@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "pelada-v1.2";
+const CACHE_NAME = "pelada-v3";
 
 const urlsToCache = [
   "./",
