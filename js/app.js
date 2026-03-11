@@ -144,7 +144,10 @@ listaJogadores.addEventListener("click", (e) => {
     const novaMov = {
       tipo: "entrada",
       valor: valorPago,
-      descricao: `${nome} pagou a mensalidade no ${formaPagamento}`
+      descricao: `${nome} pagou a mensalidade no ${formaPagamento}`,
+      forma: formaPagamento.toLowerCase(),
+      origem: "jogador",
+      jogador: nome
     };
 
     movimentacoes.push(novaMov);
@@ -166,6 +169,19 @@ listaJogadores.addEventListener("click", (e) => {
     forma.disabled = false;
 
     listaJogadores.prepend(linha);
+
+    movimentacoes = movimentacoes.filter(mov => 
+      !(mov.origem === "jogador" && mov.jogador === nome)
+    );
+
+    historicoMes = historicoMes.filter(mov =>
+      !(mov.origem === "jogador" && mov.jogador === nome)
+    );
+
+    salvar("caixa", movimentacoes);
+    salvar("historicoMes", historicoMes);
+
+    renderizarMovimentacoes();
   }
 
   salvarJogadores();
@@ -241,15 +257,23 @@ const listaMov = document.getElementById("lista-movimentacoes");
 const totalGeralEl = document.getElementById("total-geral");
 const totalPixEl = document.getElementById("total-pix");
 const totalDinheiroEl = document.getElementById("total-dinheiro");
+const btnLimparCaixa = document.getElementById("btn-limpar-caixa")
 
 
 // Modal
 const modal = document.getElementById("modal-caixa");
 const modalTitulo = document.getElementById("modal-titulo");
 const modalValor = document.getElementById("modal-valor");
+const modalForma = document.getElementById("modal-forma")
 const modalDescricao = document.getElementById("modal-descricao");
 const btnConfirmar = document.getElementById("modal-confirmar");
 const btnCancelar = document.getElementById("modal-cancelar");
+
+const modalAdmin = document.getElementById("modal-admin");
+const adminSenha = document.getElementById("admin-senha");
+const btnAdminConfirmar = document.getElementById("admin-confirmar");
+const btnAdminCancelar = document.getElementById("admin-cancelar");
+
 
 let movimentacoes = carregar("caixa") || [];
 let historicoMes = carregar("historicoMes") || [];
@@ -280,18 +304,25 @@ function calcularSaldo() {
 
       if (mov.forma === "pix") {
         totalPix += mov.valor
-      };
-
+      } 
+      
       if (mov.forma === "dinheiro") {
         totalDinheiro += mov.valor
       }
 
-    } else {
+    } else if (mov.tipo === "saida") {
       saldo -= mov.valor
-    }
-  })
 
-}
+      if (mov.forma === "pix") {
+        totalPix -= mov.valor
+      }
+
+      if (mov.forma === "dinheiro") {
+        totalDinheiro -= mov.valor
+      }
+    };
+  });
+};
 
 // Modal
 function abrirModal(tipo) {
@@ -317,7 +348,7 @@ function criarMovimentacao(valor, descricao) {
     tipo: tipoAtual,
     valor: valor,
     descricao: descricao,
-    forma: "pix"
+    forma: modalForma.value
   };
 
   // permanente
@@ -361,7 +392,25 @@ function renderizarMovimentacoes() {
     });
 }
 
+function limparCaixa(){
+
+  movimentacoes = [];
+  historicoMes = [];
+
+  salvar("caixa", movimentacoes);
+  salvar("historicoMes", historicoMes);
+
+  renderizarMovimentacoes();
+
+}
 // Eventos
+btnLimparCaixa.addEventListener("click", () => {
+   modalAdmin.classList.add("ativo");
+   adminSenha.value = "";
+   adminSenha.focus();
+});
+
+btnAdminCancelar.addEventListener("click", () => {modalAdmin.classList.remove("ativo")});
 btnEntrada.addEventListener("click", () => abrirModal("entrada"));
 btnSaida.addEventListener("click", () => abrirModal("saida"));
 btnCancelar.addEventListener("click", fecharModal);
@@ -375,6 +424,18 @@ btnConfirmar.addEventListener("click", () => {
   criarMovimentacao(valor, descricao);
   fecharModal();
 });
+
+btnAdminConfirmar.addEventListener("click", () => {
+  const senha = adminSenha.value;
+
+  if (senha !== "cerveja") {
+    alert("Senha errada, vacilão!");
+    return;
+  }
+
+  limparCaixa();
+  modalAdmin.classList.remove("ativo");
+  });
 
 // Inicializa
 renderizarMovimentacoes();

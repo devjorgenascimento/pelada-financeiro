@@ -266,3 +266,18 @@ button:hover {
   background-color: #dc2626;
   color: white;
 }
+
+.btn-admin{
+  position:absolute;
+  top:10px;
+  right:10px;
+  font-size:18px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  opacity:0.6;
+}
+
+.btn-admin:active{
+  transform:scale(0.9);
+}

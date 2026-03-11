@@ -55,6 +55,7 @@
       <div class="resumo-caixa">
         <h2>Saldo em Caixa</h2>
         <p>R$ <span id="total-geral">0.00</span></p>
+        <button id="btn-limpar-caixa"  class="btn-admin">⚙</button>
       </div>
       <div class="sub-totais">
         <p>Pix: R$ <span id="total-pix">0.00</span></p>
@@ -78,14 +79,37 @@
     <h3 id="modal-titulo">Nova Movimentação</h3>
 
     <input type="number" id="modal-valor" placeholder="Valor" step="0.01">
+    <select id="modal-forma">
+      <option value="pix">Pix</option>
+      <option value="dinheiro">Dinheiro</option>
+    </select>
     <input type="text" id="modal-descricao" placeholder="Descrição">
 
     <div class="modal-botoes">
       <button id="modal-cancelar">Cancelar</button>
       <button id="modal-confirmar">Confirmar</button>
     </div>
+   </div>
   </div>
-</div>
+
+  <div id="modal-admin" class="modal">
+  <div class="modal-conteudo">
+
+    <h3>🔒 Área administrativa</h3>
+
+    <input 
+      type="password"
+      id="admin-senha"
+      placeholder="Digite a senha"
+    >
+
+    <div class="modal-botoes">
+      <button id="admin-cancelar">Cancelar</button>
+      <button id="admin-confirmar">Confirmar</button>
+    </div>
+
+    </div>
+  </div>
 
   <script type="module" src="js/app.js"></script>
 </body>
